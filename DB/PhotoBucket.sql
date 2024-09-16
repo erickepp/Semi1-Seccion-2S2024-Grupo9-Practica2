@@ -113,33 +113,6 @@ END$$
 
 DELIMITER ;
 
--- Trigger creacion de album fotos de perfil automatico
-drop trigger CrearAlbumDespuesDeInsertarUsuario;
-
-DELIMITER $$
-
-CREATE TRIGGER CrearAlbumYImagenDespuesDeInsertarUsuario
-AFTER INSERT ON Usuario
-FOR EACH ROW
-BEGIN
-    DECLARE new_album_id INT;
-    
-    -- Inserta un nuevo álbum asociado al usuario recién creado
-    INSERT INTO Album (nombre, id_usuario)
-    VALUES (CONCAT('album ', NEW.nombre_usuario, ' fotos perfil'), NEW.id_usuario);
-
-    -- Obtiene el ID del álbum recién creado
-    SET new_album_id = LAST_INSERT_ID();
-    
-    -- Inserta una imagen en el álbum recién creado
-    INSERT INTO Imagen (nombre, descripcion, url, id_album)
-    VALUES ('foto perfil inicial', 'foto de la creación del usuario', NEW.imagen, new_album_id);
-END$$
-
-DELIMITER ;
-
-
-
 -- Activar reconocimiento
 DELIMITER $$
 
