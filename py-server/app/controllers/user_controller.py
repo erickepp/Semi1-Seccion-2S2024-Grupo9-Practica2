@@ -76,7 +76,7 @@ def add_user():
 
         # Crear un nuevo álbum para el usuario
         new_album = Album(
-            name='Fotos perfil',
+            name='Fotos de perfil',
             user_id=new_user.user_id
         )
         db.session.add(new_album)
@@ -84,7 +84,7 @@ def add_user():
             
         # Crear un nuevo registro de imagen en el álbum creado
         new_image = Image(
-            name='Foto perfil inicial',
+            name='Foto de perfil inicial',
             description='Foto de la creación del usuario',
             url=image_url,
             album_id=new_album.album_id
@@ -135,8 +135,8 @@ def update_user(user_id):
 
             # Crear un nuevo registro de imagen en el álbum de fotos de perfil
             new_image = Image(
-                name='Foto perfil',
-                description='Foto modificada',
+                name='Foto de perfil',
+                description='Foto actualizada',
                 url=image_url,
                 album_id=user.user_id
             )
