@@ -97,10 +97,6 @@ def delete_album(album_id):
         if first_album_with_user_id and first_album_with_user_id.album_id == album_id:
             return jsonify({'message': f'El álbum "{album.name}" no se puede eliminar.'}), 403
 
-        # Eliminar las imagenes de perfil del usuario del bucket S3
-        prefix = f'Fotos_Publicadas/Usuario-{album.user_id}'
-        delete_files(prefix)
-
         # Eliminar el album de la base de datos
         db.session.delete(album)
         db.session.commit()
