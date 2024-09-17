@@ -128,6 +128,11 @@ def update_user(user_id):
                 return jsonify({'message': 'El correo electrónico ya está en uso.'}), 400
             user.email = email
         if image:
+            # Buscar el primer álbum asociado al usuario
+            album = Album.query.filter_by(user_id=user_id).first()
+            if not album:
+                return jsonify({'message': 'Álbum no encontrado.'}), 404
+            
             # Subir la imagen al bucket S3
             prefix = f'Fotos_Perfil/Usuario-{user.user_id}'
             image_url = upload_file(image, f'{prefix}/{image.filename}')
@@ -138,7 +143,7 @@ def update_user(user_id):
                 name='Foto de perfil',
                 description='Foto actualizada',
                 url=image_url,
-                album_id=user.user_id
+                album_id=album.album_id
             )
             db.session.add(new_image)
 
