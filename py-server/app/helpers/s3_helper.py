@@ -50,7 +50,8 @@ def delete_files(prefix):
         response = s3_client.list_objects_v2(Bucket=aws_bucket_name, Prefix=prefix)
         
         if 'Contents' not in response:
-            raise RuntimeError(f'No se encontraron archivos con el prefijo "{prefix}".')
+            print(f'No se encontraron archivos con el prefijo "{prefix}".')
+            return
         
         # Preparar la lista de claves de los objetos a eliminar
         objects_to_delete = [{'Key': obj['Key']} for obj in response['Contents']]

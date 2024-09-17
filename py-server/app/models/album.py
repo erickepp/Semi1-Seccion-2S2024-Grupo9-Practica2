@@ -11,7 +11,7 @@ class Album(db.Model):
     # Relación con Image
     images = db.relationship('Image', backref='album', lazy=True, cascade='all, delete-orphan')
     
-    def to_dict(self, include_user=True, include_images=False):
+    def to_dict(self, include_user=True, include_images=True):
         data = {
             'album_id': self.album_id,
             'name': self.name
