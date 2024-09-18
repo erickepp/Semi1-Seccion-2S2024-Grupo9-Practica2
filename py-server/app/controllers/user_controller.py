@@ -175,6 +175,10 @@ def delete_user(user_id):
         prefix = f'Fotos_Perfil/Usuario-{user_id}'
         delete_files(prefix)
 
+        # Eliminar los álbumes del usuario del bucket S3
+        prefix = f'Fotos_Publicadas/Usuario-{user_id}'
+        delete_files(prefix)
+
         # Eliminar el usuario de la base de datos
         db.session.delete(user)
         db.session.commit()

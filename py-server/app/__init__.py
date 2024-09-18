@@ -1,7 +1,7 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 from config.db import init_db
-from app.routes import auth_routes, user_routes, album_routes
+from app.routes import auth_routes, user_routes, album_routes, image_routes
 
 
 def create_app():
@@ -17,5 +17,6 @@ def create_app():
     app.register_blueprint(auth_routes.bp)
     app.register_blueprint(user_routes.bp)
     app.register_blueprint(album_routes.bp)
+    app.register_blueprint(image_routes.bp)
 
     return app

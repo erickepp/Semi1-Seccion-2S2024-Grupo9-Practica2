@@ -18,5 +18,5 @@ class Image(db.Model):
             'url': self.url
         }
         if include_album:
-            data['album'] = self.album.to_dict()
+            data['album'] = self.album.to_dict(include_images=False)
         return data

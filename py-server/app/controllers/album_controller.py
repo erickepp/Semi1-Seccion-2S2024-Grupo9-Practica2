@@ -30,7 +30,7 @@ def get_album(album_id):
         if album:
             return jsonify(album.to_dict()), 200
         else:
-            return jsonify({'message': 'Album no encontrado.'}), 404
+            return jsonify({'message': 'Álbum no encontrado.'}), 404
     except Exception as e:
         return jsonify({'message': f'Error interno del servidor: {str(e)}'}), 500
 
@@ -45,7 +45,7 @@ def add_album():
         if not all([name, user_id]):
             return jsonify({'message': 'Todos los campos son necesarios.'}), 400
 
-        # Crear y agregar el nuevo album a la base de datos
+        # Crear y agregar el nuevo álbum a la base de datos
         new_album = Album(
             name=name,
             user_id=user_id
@@ -62,7 +62,7 @@ def update_album(album_id):
     try:
         album = Album.query.get(album_id)
         if not album:
-            return jsonify({'message': 'Album no encontrado.'}), 404
+            return jsonify({'message': 'Álbum no encontrado.'}), 404
         
         # Verificar si el álbum puede ser modificado
         # Buscar el primer álbum con el mismo user_id
@@ -89,7 +89,7 @@ def delete_album(album_id):
     try:
         album = Album.query.get(album_id)
         if not album:
-            return jsonify({'message': 'Album no encontrado.'}), 404
+            return jsonify({'message': 'Álbum no encontrado.'}), 404
         
         # Verificar si el álbum puede ser eliminado
         # Buscar el primer álbum con el mismo user_id
@@ -97,10 +97,14 @@ def delete_album(album_id):
         if first_album_with_user_id and first_album_with_user_id.album_id == album_id:
             return jsonify({'message': f'El álbum "{album.name}" no se puede eliminar.'}), 403
 
-        # Eliminar el album de la base de datos
+        # Eliminar el álbum del bucket S3
+        prefix = f'Fotos_Publicadas/Usuario-{album.user_id}/Album-{album_id}'
+        delete_files(prefix)
+
+        # Eliminar el álbum de la base de datos
         db.session.delete(album)
         db.session.commit()
 
-        return jsonify({'message': 'Album eliminado exitosamente.'}), 200
+        return jsonify({'message': 'Álbum eliminado exitosamente.'}), 200
     except Exception as e:
         return jsonify({'message': f'Error interno del servidor: {str(e)}'}), 500
