@@ -11,42 +11,21 @@ rekognition_client = boto3.client(
 )
 
 
-def get_face_count(image):
+def compare_faces(source_image, s3_bucket_name, s3_object_name, threshold=90):
     try:
-        # Leer el contenido de la imagen
-        image_bytes = image.read()
-        image.seek(0)  # Reiniciar el cursor del archivo al principio
-
-        # Detecta rostros en la imagen
-        response = rekognition_client.detect_faces(
-            Image={'Bytes': image_bytes},
-            Attributes=['ALL']
-        )
-        
-        # Obtiene la lista de detalles de los rostros detectados
-        face_details = response['FaceDetails']
-        num_faces = len(face_details)
-        return num_faces
-    except (BotoCoreError, ClientError) as e:
-        raise RuntimeError(f'Error al utilizar el servicio de Rekognition para detectar rostros: {str(e)}')
-    except Exception as e:
-        raise RuntimeError(f'Error inesperado durante la detección de rostros: {str(e)}')
-
-
-def compare_faces(source_image, target_image, threshold=90):
-    try:
-        # Leer el contenido de las imágenes
+        # Leer el contenido de la imagen de origen
         source_image_bytes = source_image.read()
-        target_image_bytes = target_image.read()
+        source_image.seek(0) # Vuelve al principio del archivo
 
-        # Reiniciar el cursor de los archivos
-        source_image.seek(0)
-        target_image.seek(0)
-
-        # Compara las imágenes utilizando Rekognition
+        # Compara la imagen de origen con la imagen en S3
         response = rekognition_client.compare_faces(
             SourceImage={'Bytes': source_image_bytes},
-            TargetImage={'Bytes': target_image_bytes},
+            TargetImage={
+                'S3Object': {
+                    'Bucket': s3_bucket_name,
+                    'Name': s3_object_name
+                }
+            },
             SimilarityThreshold=threshold
         )
 

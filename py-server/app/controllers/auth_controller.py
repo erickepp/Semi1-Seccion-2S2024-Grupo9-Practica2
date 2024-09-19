@@ -1,8 +1,8 @@
+import os
 import bcrypt
 from flask import request, jsonify
 from app.models.user import User
-from app.helpers.s3_helper import get_file
-from app.helpers.rekognition_helper import get_face_count, compare_faces
+from app.helpers.rekognition_helper import compare_faces
 
 
 def authenticate():
@@ -36,32 +36,37 @@ def authenticate():
 
 def authenticate_with_facial_recognition():
     try:
+        username_or_email = request.form.get('username_or_email')
         image = request.files.get('image')
 
         # Validar la entrada
-        if not image:
-            return jsonify({'message': 'No se proporcionó ninguna imagen.'}), 400
+        if not username_or_email or not image:
+            return jsonify({'message': 'Todos los campos son necesarios.'}), 400
 
-        # Obtener el número de rostros detectados
-        face_count = get_face_count(image)
+        # Buscar el usuario primero por username
+        user = User.query.filter_by(username=username_or_email).first()
+        
+        # Si no se encontró por username, intentar buscar por email
+        if not user:
+            user = User.query.filter_by(email=username_or_email).first()
+        
+        if not user:
+            return jsonify({'message': 'Usuario no encontrado.'}), 404
 
-        if face_count != 1:
-            return jsonify({
-                    'message': f'La imagen debe contener exactamente un rostro. Detectados: {face_count}'
-            }), 400
-        
-        # Obtener todos los usuarios con autenticación facial activada
-        users = User.query.filter_by(login_image=True).all()
-        
-        # Comparar la imagen con las imágenes de los usuarios
-        for user in users:
-            image_key = get_file(user.image_key)
-            
-            # Comparar imágenes
-            if compare_faces(image, image_key):
-                return jsonify(user.to_dict()), 200
-        
-        # Si no se encontró ninguna coincidencia
-        return jsonify({'message': 'Usuario no encontrado.'}), 404
+        # Verificar si el usuario tiene activado el reconocimiento facial
+        if not user.login_image:
+            return jsonify({'message': 'El reconocimiento facial está desactivado para este usuario.'}), 403
+
+        # Obtener el nombre del bucket de la variable de entorno
+        s3_bucket_name = os.getenv('AWS_BUCKET_NAME')
+
+        # Extraer el nombre del objeto S3 desde la URL de image_key del usuario
+        s3_object_name = user.image_key.split('/', 3)[-1]
+
+        # Comparar imágenes
+        if not compare_faces(image, s3_bucket_name, s3_object_name):
+            return jsonify({'message': 'Los rostros no coinciden.'}), 404
+
+        return jsonify(user.to_dict()), 200
     except Exception as e:
         return jsonify({'message': f'Error interno del servidor: {str(e)}'}), 500

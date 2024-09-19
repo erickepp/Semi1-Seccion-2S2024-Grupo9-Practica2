@@ -4,7 +4,6 @@ from app.models.user import User
 from app.models.album import Album
 from app.models.image import Image
 from app.helpers.s3_helper import upload_file, delete_files
-from app.helpers.rekognition_helper import get_face_count
 from config.db import db
 
 
@@ -229,23 +228,19 @@ def update_facial_recognition(user_id):
             
             message = 'Reconocimiento facial desactivado.'
         elif status == 1:
-            # Obtener el número de rostros detectados
-            face_count = get_face_count(image_key)
+             # Verificar si la imagen clave fue proporcionada
+            if not image_key:
+                return jsonify({'message': 'Se requiere la imagen clave.'}), 400
 
-            if face_count == 1:
-                # Subir la imagen al bucket S3
-                prefix = f'Fotos_Reconocimiento_Facial/Usuario-{user.user_id}'
-                image_url = upload_file(image_key, f'{prefix}/{image_key.filename}')
+            # Subir la imagen al bucket S3
+            prefix = f'Fotos_Reconocimiento_Facial/Usuario-{user.user_id}'
+            image_url = upload_file(image_key, f'{prefix}/{image_key.filename}')
                 
-                # Actualizar el estado del login_image y image_key
-                user.login_image = True
-                user.image_key = image_url
+            # Actualizar el estado del login_image y image_key
+            user.login_image = True
+            user.image_key = image_url
 
-                message = 'Reconocimiento facial activado.'
-            else:
-                return jsonify({
-                    'message': f'La imagen debe contener exactamente un rostro. Detectados: {face_count}'
-                }), 400
+            message = 'Reconocimiento facial activado.'
         else:
             return jsonify({'message': 'El valor del estado no es válido. Debe ser 0 o 1.'}), 400
 
@@ -262,9 +257,9 @@ def update_image_key(user_id):
         if not user:
             return jsonify({'message': 'Usuario no encontrado.'}), 404
         
-        # Verificar si el reconocimiento facial está activado
+        # Verificar si el usuario tiene activado el reconocimiento facial
         if not user.login_image:
-            return jsonify({'message': 'El reconocimiento facial está desactivado.'}), 400
+            return jsonify({'message': 'El reconocimiento facial está desactivado para este usuario.'}), 403
 
         image_key = request.files.get('image_key')
         password = request.form.get('password')
@@ -281,21 +276,12 @@ def update_image_key(user_id):
         if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
             return jsonify({'message': 'La contraseña es incorrecta.'}), 400
         
-        # Obtener el número de rostros detectados
-        face_count = get_face_count(image_key)
-
-        if face_count == 1:
-            # Subir la imagen al bucket S3
-            prefix = f'Fotos_Reconocimiento_Facial/Usuario-{user.user_id}'
-            image_url = upload_file(image_key, f'{prefix}/{image_key.filename}')
+        # Subir la imagen al bucket S3
+        prefix = f'Fotos_Reconocimiento_Facial/Usuario-{user.user_id}'
+        image_url = upload_file(image_key, f'{prefix}/{image_key.filename}')
             
-            # Actualizar el campo image_key del usuario
-            user.image_key = image_url
-        else:
-            return jsonify({
-                'message': f'La imagen debe contener exactamente un rostro. Detectados: {face_count}'
-            }), 400
-        
+        # Actualizar el campo image_key del usuario
+        user.image_key = image_url
         db.session.commit()
 
         return jsonify(user.to_dict()), 200

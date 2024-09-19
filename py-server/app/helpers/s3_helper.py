@@ -1,10 +1,6 @@
 import os
-import io
-import urllib.parse
 import boto3
 import filetype
-from werkzeug.datastructures import FileStorage
-from botocore.exceptions import BotoCoreError, ClientError
 
 aws_access_key_id = os.getenv('AWS_ACCESS_KEY_ID')
 aws_secret_access_key = os.getenv('AWS_SECRET_ACCESS_KEY')
@@ -46,31 +42,6 @@ def upload_file(file, object_name):
         raise RuntimeError(
             f'Error al subir el archivo "{object_name}" al bucket "{aws_bucket_name}": {str(e)}'
         )
-
-
-def get_file(file_url):
-    try:
-         # Extraer la clave del objeto de la URL
-        parsed_url = urllib.parse.urlparse(file_url)
-        object_name = parsed_url.path.lstrip('/')  # Quitar el primer '/' de la ruta
-
-        # Obtener el objeto desde el bucket S3
-        response = s3_client.get_object(Bucket=aws_bucket_name, Key=object_name)
-
-         # Leer los datos del archivo en memoria
-        file_data = io.BytesIO(response['Body'].read())
-        file_data.seek(0)  # Reiniciar el cursor del archivo
-
-        # Simular un archivo como FileStorage de Flask
-        file_storage = FileStorage(stream=file_data, filename=object_name)
-
-        return file_storage
-    except (BotoCoreError, ClientError) as e:
-        raise RuntimeError(
-            f'Error al obtener el archivo "{object_name}" desde el bucket "{aws_bucket_name}": {str(e)}'
-        )
-    except Exception as e:
-        raise RuntimeError(f'Error inesperado al obtener el archivo: {str(e)}')
 
 
 def delete_files(prefix):
