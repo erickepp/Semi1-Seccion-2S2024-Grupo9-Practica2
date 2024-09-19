@@ -9,13 +9,15 @@ const db = require('./conexion/conexion');
 //Rutas de usuarios
 const usersRoutes = require('./routes/user_routes');
 const authRoutes = require('./routes/auth_routes');
+const albumRoutes =  require('./routes/album_route');
+const imagesRoutes = require('./routes/image_routes');
 
 app.use(express.json());
 app.use(morgan('dev'));
 
 
 //Usar las rutas
-app.use('/', usersRoutes,authRoutes);
+app.use('/', usersRoutes,authRoutes,albumRoutes,imagesRoutes);
 
 
 app.listen(port, () =>{

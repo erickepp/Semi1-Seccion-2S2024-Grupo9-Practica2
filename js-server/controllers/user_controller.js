@@ -264,7 +264,7 @@ const update_user = (req, res) => {
                                     if (error) return reject({ message: `Error al actualizar la imagen: ${error.message}` });
 
                                     conexion.query('INSERT INTO Imagen (nombre, descripcion, url, id_album) VALUES (?, ?, ?, ?)',
-                                        ['Foto de perfil', 'Foto actualizada', imageUrl, userId], (error) => {
+                                        ['Foto de perfil', 'Foto actualizada', imageUrl, newAlbumId], (error) => {
                                             if (error) return reject({ message: `Error al agregar la imagen: ${error.message}` });
                                             resolve({ imageUrl });
                                         });
