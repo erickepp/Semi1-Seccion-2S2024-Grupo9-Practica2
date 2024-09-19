@@ -4,6 +4,7 @@ from app.models.user import User
 from app.models.album import Album
 from app.models.image import Image
 from app.helpers.s3_helper import upload_file, delete_files
+from app.helpers.rekognition_helper import get_face_count
 from config.db import db
 
 
@@ -179,10 +180,124 @@ def delete_user(user_id):
         prefix = f'Fotos_Publicadas/Usuario-{user_id}'
         delete_files(prefix)
 
+        # Eliminar las imagenes de reconocimiento facial del usuario del bucket S3
+        prefix = f'Fotos_Reconocimiento_Facial/Usuario-{user_id}'
+        delete_files(prefix)
+
         # Eliminar el usuario de la base de datos
         db.session.delete(user)
         db.session.commit()
 
         return jsonify({'message': 'Usuario eliminado exitosamente.'}), 200
+    except Exception as e:
+        return jsonify({'message': f'Error interno del servidor: {str(e)}'}), 500
+
+
+def update_facial_recognition(user_id):
+    try:
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({'message': 'Usuario no encontrado.'}), 404
+
+        data = request.form
+        status_str = data.get('status')
+        image_key = request.files.get('image_key')
+        password = data.get('password')
+
+        # Verificar si el eatado fue proporcionado
+        if not status_str:
+            return jsonify({'message': 'El estado (0 o 1) es requerido.'}), 400
+        
+        # Castear el estado a entero
+        try:
+            status = int(status_str)
+        except ValueError:
+            return jsonify({'message': 'El estado debe ser un número (0 o 1).'}), 400
+
+        # Verificar si la contraseña fue proporcionada
+        if not password:
+            return jsonify({'message': 'Se requiere la contraseña.'}), 400
+        
+        # Validar la contraseña del usuario
+        if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+            return jsonify({'message': 'La contraseña es incorrecta.'}), 400
+        
+        if status == 0:
+            # Desactivar reconocimiento facial
+            user.login_image = False
+            user.image_key = None
+            
+            message = 'Reconocimiento facial desactivado.'
+        elif status == 1:
+            # Obtener el número de rostros detectados
+            face_count = get_face_count(image_key)
+
+            if face_count == 1:
+                # Subir la imagen al bucket S3
+                prefix = f'Fotos_Reconocimiento_Facial/Usuario-{user.user_id}'
+                image_url = upload_file(image_key, f'{prefix}/{image_key.filename}')
+                
+                # Actualizar el estado del login_image y image_key
+                user.login_image = True
+                user.image_key = image_url
+
+                message = 'Reconocimiento facial activado.'
+            else:
+                return jsonify({
+                    'message': f'La imagen debe contener exactamente un rostro. Detectados: {face_count}'
+                }), 400
+        else:
+            return jsonify({'message': 'El valor del estado no es válido. Debe ser 0 o 1.'}), 400
+
+        db.session.commit()
+        
+        return jsonify({'message': message, 'user': user.to_dict()}), 200
+    except Exception as e:
+        return jsonify({'message': f'Error interno del servidor: {str(e)}'}), 500
+
+
+def update_image_key(user_id):
+    try:
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({'message': 'Usuario no encontrado.'}), 404
+        
+        # Verificar si el reconocimiento facial está activado
+        if not user.login_image:
+            return jsonify({'message': 'El reconocimiento facial está desactivado.'}), 400
+
+        image_key = request.files.get('image_key')
+        password = request.form.get('password')
+
+        # Verificar si la imagen clave fue proporcionada
+        if not image_key:
+            return jsonify({'message': 'Se requiere la imagen clave.'}), 400
+
+        # Verificar si la contraseña fue proporcionada
+        if not password:
+            return jsonify({'message': 'Se requiere la contraseña.'}), 400
+        
+        # Validar la contraseña del usuario
+        if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+            return jsonify({'message': 'La contraseña es incorrecta.'}), 400
+        
+        # Obtener el número de rostros detectados
+        face_count = get_face_count(image_key)
+
+        if face_count == 1:
+            # Subir la imagen al bucket S3
+            prefix = f'Fotos_Reconocimiento_Facial/Usuario-{user.user_id}'
+            image_url = upload_file(image_key, f'{prefix}/{image_key.filename}')
+            
+            # Actualizar el campo image_key del usuario
+            user.image_key = image_url
+        else:
+            return jsonify({
+                'message': f'La imagen debe contener exactamente un rostro. Detectados: {face_count}'
+            }), 400
+        
+        db.session.commit()
+
+        return jsonify(user.to_dict()), 200
     except Exception as e:
         return jsonify({'message': f'Error interno del servidor: {str(e)}'}), 500
