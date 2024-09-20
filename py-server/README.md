@@ -170,7 +170,7 @@
 
 **Descripción:** Crea un nuevo álbum para un usuario.  
 
-**Cuerpo:** Datos del formulario con los siguientes campos:
+**Cuerpo:** Objeto JSON con los siguientes campos:
 
 -   **name** (requerido): Nombre del álbum.
 -   **user_id** (requerido): ID del usuario propietario del álbum. 
@@ -187,7 +187,7 @@
 
 -   **album_id** (requerido): El ID del álbum a actualizar.
 
-**Cuerpo:** Datos del formulario:
+**Cuerpo:** Objeto JSON con los siguientes campos:
 -   **name** (requerido): Nombre del álbum.  
 
 **Respuesta:** Devuelve los detalles del álbum actualizado.
