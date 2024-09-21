@@ -24,11 +24,6 @@ def patch_user_route(user_id):
     return uc.update_user(user_id)
 
 
-@bp.route('/users/<int:user_id>', methods=['DELETE'])
-def delete_user_route(user_id):
-    return uc.delete_user(user_id)
-
-
 @bp.route('/users/<int:user_id>/facial-recognition', methods=['PATCH'])
 def patch_facial_recognition_route(user_id):
     return uc.update_facial_recognition(user_id)
@@ -37,3 +32,8 @@ def patch_facial_recognition_route(user_id):
 @bp.route('/users/<int:user_id>/image-key', methods=['PATCH'])
 def patch_image_key_route(user_id):
     return uc.update_image_key(user_id)
+
+
+@bp.route('/users/<int:user_id>', methods=['DELETE'])
+def delete_user_route(user_id):
+    return uc.delete_user(user_id)
