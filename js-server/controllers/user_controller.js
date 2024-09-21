@@ -299,6 +299,158 @@ const update_user = (req, res) => {
 };
 
 
+
+
+
+const update_facial_recognition = async (req, res) => {
+    const userId = req.params.user_id;
+
+    try {
+        // Consultar el usuario por ID
+        const userQuery = 'SELECT * FROM Usuario WHERE id_usuario = ?';
+        conexion.query(userQuery, [userId], async (err, userResults) => {
+            if (err) {
+                return res.status(500).json({ message: `Error interno del servidor: ${err.message}` });
+            }
+
+            if (userResults.length === 0) {
+                return res.status(404).json({ message: 'Usuario no encontrado.' });
+            }
+
+            const user = userResults[0];
+            const data = req.body;
+            const statusStr = data.status;
+            const password = data.password;
+            const imageKey = req.file;
+
+            // Verificar si el estado fue proporcionado
+            if (!statusStr) {
+                return res.status(400).json({ message: 'El estado (0 o 1) es requerido.' });
+            }
+
+            const status = parseInt(statusStr, 10);
+            if (isNaN(status)) {
+                return res.status(400).json({ message: 'El estado debe ser un número (0 o 1).' });
+            }
+
+            // Verificar si la contraseña fue proporcionada
+            if (!password) {
+                return res.status(400).json({ message: 'Se requiere la contraseña.' });
+            }
+
+            // Validar la contraseña del usuario
+            const isPasswordValid = bcrypt.compareSync(password, user.pass);
+            if (!isPasswordValid) {
+                return res.status(400).json({ message: 'La contraseña es incorrecta.' });
+            }
+
+            let message;
+            if (status === 0) {
+                user.login_imagen = false;
+                user.imagen_clave = null;
+                message = 'Reconocimiento facial desactivado.';
+            } else if (status === 1) {
+                if (!imageKey) {
+                    return res.status(400).json({ message: 'Se requiere la imagen clave.' });
+                }
+
+                // Espera a que se resuelva la promesa de uploadFile
+                const prefix = `Fotos_Reconocimiento_Facial/Usuario-${user.id_usuario}`;
+                const imageUrl = await uploadFile(imageKey, `${prefix}/${imageKey.originalname}`);
+
+                user.login_imagen = true;
+                user.imagen_clave = imageUrl;
+
+                message = 'Reconocimiento facial activado.';
+            } else {
+                return res.status(400).json({ message: 'El valor del estado no es válido. Debe ser 0 o 1.' });
+            }
+
+            // Actualizar el usuario en la base de datos
+            const updateQuery = 'UPDATE Usuario SET login_imagen = ?, imagen_clave = ? WHERE id_usuario = ?';
+            conexion.query(updateQuery, [user.login_imagen, user.imagen_clave, userId], (err) => {
+                if (err) {
+                    return res.status(500).json({ message: `Error al actualizar el usuario: ${err.message}` });
+                }
+
+                return res.status(200).json({
+                    message: message,
+                    user: {
+                        user_id: user.id_usuario,
+                        username: user.nombre_usuario,
+                        email: user.correo,
+                        image: user.imagen,
+                        login_image: user.login_imagen,
+                        image_key: user.imagen_clave
+                    }
+                });
+            });
+        });
+    } catch (error) {
+        return res.status(500).json({ message: `Error interno del servidor: ${error.message}` });
+    }
+};
+
+const update_image_key = async (req, res) => {
+    const userId = req.params.userId;
+    const imageKey = req.files ? req.files.image_key : null; // Asegúrate de tener un middleware para manejar archivos
+    const password = req.body.password;
+
+    try {
+        // Consulta para obtener el usuario
+        const query = 'SELECT * FROM Usuario WHERE id_usuario = ?';
+        db.query(query, [userId], async (error, results) => {
+            if (error) {
+                return res.status(500).json({ message: 'Error en la consulta.' });
+            }
+            if (results.length === 0) {
+                return res.status(404).json({ message: 'Usuario no encontrado.' });
+            }
+
+            const user = results[0];
+
+            // Verificar si el reconocimiento facial está habilitado
+            if (!user.login_image) {
+                return res.status(403).json({ message: 'El reconocimiento facial está desactivado para este usuario.' });
+            }
+
+            // Verificar si la imagen clave fue proporcionada
+            if (!imageKey) {
+                return res.status(400).json({ message: 'Se requiere la imagen clave.' });
+            }
+
+            // Verificar si la contraseña fue proporcionada
+            if (!password) {
+                return res.status(400).json({ message: 'Se requiere la contraseña.' });
+            }
+
+            // Validar la contraseña del usuario
+            const isPasswordValid = await bcrypt.compare(password, user.password);
+            if (!isPasswordValid) {
+                return res.status(400).json({ message: 'La contraseña es incorrecta.' });
+            }
+
+            // Subir la imagen al bucket S3
+            const prefix = `Fotos_Reconocimiento_Facial/Usuario-${user.id_usuario}`;
+            const imageUrl = await uploadFile(imageKey, `${prefix}/${imageKey.name}`);
+
+            // Actualizar el campo image_key del usuario
+            const updateQuery = 'UPDATE Usuario SET imagen_clave = ? WHERE id_usuario = ?';
+            db.query(updateQuery, [imageUrl, userId], (updateError) => {
+                if (updateError) {
+                    return res.status(500).json({ message: 'Error al actualizar la imagen.' });
+                }
+                return res.status(200).json({ message: 'Imagen clave actualizada correctamente.', user: { ...user, image_key: imageUrl } });
+            });
+        });
+    } catch (e) {
+        return res.status(500).json({ message: `Error interno del servidor: ${e.message}` });
+    }
+};
+
+
+
+
 // Función para eliminar un usuario
 const delete_user_route = (req, res) => {
     const userId = req.params.user_id;
@@ -358,4 +510,4 @@ const delete_user_route = (req, res) => {
 
 
 
-module.exports = {get_users,get_user,addUser,update_user,delete_user_route}
+module.exports = {get_users,get_user,addUser,update_user,delete_user_route,update_facial_recognition,update_image_key}

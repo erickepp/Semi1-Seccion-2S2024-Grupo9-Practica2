@@ -26,4 +26,36 @@ const deleteFiles = (prefix, callback) => {
     });
 };
 
-module.exports = deleteFiles;
+const delete_files = (prefix) => {
+    return new Promise((resolve, reject) => {
+        //console.log(`Buscando objetos con el prefijo: ${prefix}`);
+        
+        // Obtén la lista de objetos en el bucket
+        s3.listObjectsV2({ Bucket: bucketName, Prefix: prefix }, (err, data) => {
+            if (err) {
+                console.error(`Error al listar objetos: ${err}`);
+                return reject(err);
+            }
+
+            console.log(`Objetos encontrados: ${data.Contents.length}`);
+            if (data.Contents.length === 0) {
+                console.log('No hay objetos para eliminar.');
+                return resolve(); // No hay objetos que eliminar
+            }
+
+            const objectsToDelete = data.Contents.map(obj => ({ Key: obj.Key }));
+            console.log(`Objetos a eliminar: ${JSON.stringify(objectsToDelete)}`);
+
+            s3.deleteObjects({ Bucket: bucketName, Delete: { Objects: objectsToDelete } }, (deleteErr) => {
+                if (deleteErr) {
+                    console.error(`Error al eliminar objetos: ${deleteErr}`);
+                    return reject(deleteErr);
+                }
+                console.log('Objetos eliminados exitosamente.');
+                resolve();
+            });
+        });
+    });
+};
+
+module.exports = {deleteFiles,delete_files};
