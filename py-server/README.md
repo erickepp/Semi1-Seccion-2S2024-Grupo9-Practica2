@@ -227,6 +227,18 @@
 
 ---
 
+### GET /images/image_id/labels
+
+**Descripción:** Genera etiquetas de una imagen específica por su ID.
+
+**Parámetros de ruta:**
+
+-   **image_id** (requerido): El ID de la imagen.
+
+**Respuesta:** Devuelve una lista de etiquetas de la imagen.
+
+---
+
 ### POST /images
 
 **Descripción:** Registra una nueva imagen en un álbum.
@@ -239,3 +251,15 @@
 -   **album_id** (requerido): ID del álbum donde se agregará la imagen.
 
 **Respuesta:** Devuelve los detalles de la nueva imagen si la creación es exitosa.
+
+---
+
+### POST /images/text
+
+**Descripción:** Extrae el texto de una imagen.
+
+**Cuerpo:** Datos del formulario con los siguientes campos:
+
+-   **image** (requerido): Archivo de la imagen.
+
+**Respuesta:** Devuelve el texto de la imagen.
