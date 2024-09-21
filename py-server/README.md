@@ -83,22 +83,6 @@
 
 ---
 
-### DELETE /users/user_id
-
-**Descripción:** Elimina un usuario específico.
-
-**Parámetros de ruta:**
-
--   **user_id** (requerido): El ID del usuario a eliminar.  
-
-**Cuerpo:** Objeto JSON con el siguiente campo:
-
--   **password** (requerido): Contraseña del usuario.  
-
-**Respuesta:** Mensaje de éxito si el usuario es eliminado correctamente.
-
----
-
 ### PATCH /users/user_id/facial-recognition
 
 **Descripción:** Actualiza el estado del reconocimiento facial de un usuario.  
@@ -130,6 +114,22 @@
 -   **password** (requerido): Contraseña del usuario.
 
 **Respuesta:** Devuelve los detalles del usuario actualizado.
+
+---
+
+### DELETE /users/user_id
+
+**Descripción:** Elimina un usuario específico.
+
+**Parámetros de ruta:**
+
+-   **user_id** (requerido): El ID del usuario a eliminar.  
+
+**Cuerpo:** Objeto JSON con el siguiente campo:
+
+-   **password** (requerido): Contraseña del usuario.  
+
+**Respuesta:** Mensaje de éxito si el usuario es eliminado correctamente.
 
 ---
 
