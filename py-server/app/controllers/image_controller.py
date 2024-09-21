@@ -1,7 +1,9 @@
+import os
 from flask import request, jsonify
 from app.models.album import Album
 from app.models.image import Image
 from app.helpers.s3_helper import upload_file
+from app.helpers.rekognition_helper import get_labels, extract_text
 from config.db import db
 
 
@@ -20,6 +22,26 @@ def get_image(image_id):
             return jsonify(image.to_dict()), 200
         else:
             return jsonify({'message': 'Imagen no encontrada.'}), 404
+    except Exception as e:
+        return jsonify({'message': f'Error interno del servidor: {str(e)}'}), 500
+
+
+def get_image_labels(image_id):
+    try:
+        image = Image.query.get(image_id)
+        if not image:
+            return jsonify({'message': 'Imagen no encontrada.'}), 404
+        
+        # Obtener el nombre del bucket de la variable de entorno
+        s3_bucket_name = os.getenv('AWS_BUCKET_NAME')
+
+        # Extraer el nombre del objeto S3 desde la URL de la imagen
+        s3_object_name = image.url.split('/', 3)[-1]
+        
+        # Obtener etiquetas de la imagen en S3
+        labels = get_labels(s3_bucket_name, s3_object_name)
+        
+        return jsonify({'labels': labels}), 200
     except Exception as e:
         return jsonify({'message': f'Error interno del servidor: {str(e)}'}), 500
 
@@ -62,5 +84,21 @@ def add_image():
         db.session.commit()
 
         return jsonify(new_image.to_dict()), 201
+    except Exception as e:
+        return jsonify({'message': f'Error interno del servidor: {str(e)}'}), 500
+
+
+def extract_text_from_image():
+    try:
+        image = request.files.get('image')
+
+        # Verificar si la imagen fue proporcionada
+        if not image:
+            return jsonify({'message': 'Se requiere la imagen.'}), 400
+        
+        # Obtener texto de la imagen
+        text = extract_text(image)
+        
+        return jsonify({'text': text}), 200
     except Exception as e:
         return jsonify({'message': f'Error interno del servidor: {str(e)}'}), 500
