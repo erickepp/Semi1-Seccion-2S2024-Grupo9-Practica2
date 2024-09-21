@@ -154,44 +154,6 @@ def update_user(user_id):
         return jsonify({'message': f'Error interno del servidor: {str(e)}'}), 500
 
 
-def delete_user(user_id):
-    try:
-        user = User.query.get(user_id)
-        if not user:
-            return jsonify({'message': 'Usuario no encontrado.'}), 404
-        
-        data = request.get_json()
-        password = data.get('password')
-
-        # Verificar si la contraseña fue proporcionada
-        if not password:
-            return jsonify({'message': 'Se requiere la contraseña.'}), 400
-        
-        # Validar la contraseña del usuario
-        if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
-            return jsonify({'message': 'La contraseña es incorrecta.'}), 400
-        
-        # Eliminar las imagenes de perfil del usuario del bucket S3
-        prefix = f'Fotos_Perfil/Usuario-{user_id}'
-        delete_files(prefix)
-
-        # Eliminar los álbumes del usuario del bucket S3
-        prefix = f'Fotos_Publicadas/Usuario-{user_id}'
-        delete_files(prefix)
-
-        # Eliminar las imagenes de reconocimiento facial del usuario del bucket S3
-        prefix = f'Fotos_Reconocimiento_Facial/Usuario-{user_id}'
-        delete_files(prefix)
-
-        # Eliminar el usuario de la base de datos
-        db.session.delete(user)
-        db.session.commit()
-
-        return jsonify({'message': 'Usuario eliminado exitosamente.'}), 200
-    except Exception as e:
-        return jsonify({'message': f'Error interno del servidor: {str(e)}'}), 500
-
-
 def update_facial_recognition(user_id):
     try:
         user = User.query.get(user_id)
@@ -285,5 +247,43 @@ def update_image_key(user_id):
         db.session.commit()
 
         return jsonify(user.to_dict()), 200
+    except Exception as e:
+        return jsonify({'message': f'Error interno del servidor: {str(e)}'}), 500
+
+
+def delete_user(user_id):
+    try:
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({'message': 'Usuario no encontrado.'}), 404
+        
+        data = request.get_json()
+        password = data.get('password')
+
+        # Verificar si la contraseña fue proporcionada
+        if not password:
+            return jsonify({'message': 'Se requiere la contraseña.'}), 400
+        
+        # Validar la contraseña del usuario
+        if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+            return jsonify({'message': 'La contraseña es incorrecta.'}), 400
+        
+        # Eliminar las imagenes de perfil del usuario del bucket S3
+        prefix = f'Fotos_Perfil/Usuario-{user_id}'
+        delete_files(prefix)
+
+        # Eliminar los álbumes del usuario del bucket S3
+        prefix = f'Fotos_Publicadas/Usuario-{user_id}'
+        delete_files(prefix)
+
+        # Eliminar las imagenes de reconocimiento facial del usuario del bucket S3
+        prefix = f'Fotos_Reconocimiento_Facial/Usuario-{user_id}'
+        delete_files(prefix)
+
+        # Eliminar el usuario de la base de datos
+        db.session.delete(user)
+        db.session.commit()
+
+        return jsonify({'message': 'Usuario eliminado exitosamente.'}), 200
     except Exception as e:
         return jsonify({'message': f'Error interno del servidor: {str(e)}'}), 500
