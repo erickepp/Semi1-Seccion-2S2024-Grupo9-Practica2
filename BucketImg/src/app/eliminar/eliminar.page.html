@@ -1,0 +1,27 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>BucketImg</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">BucketImg</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="divGeneral">
+    <div class="cuadroLogin">
+
+      <ion-label>
+        La eliminación de la cuenta es irreversible, si esta seguro de realizar la acción, ingrese su contraseña para verificar su identidad.
+      </ion-label>
+      <ion-input fill="outline" [(ngModel)]="pass" label="Contraseña" label-placement="floating" type="password"></ion-input>
+
+      <ion-button shape="round" (click)="registrar()">GUARDAR CAMBIOS</ion-button>
+      <ion-button shape="round" (click)="regresar()">CANCELAR</ion-button>
+
+    </div>
+  </div>
+</ion-content>

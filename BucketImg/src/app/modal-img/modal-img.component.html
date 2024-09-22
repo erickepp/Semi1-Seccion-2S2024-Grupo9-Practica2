@@ -1,0 +1,28 @@
+<ion-label class="labelTitulo">{{tituloImg}}</ion-label>
+<div class="divGeneral">
+  <div class="cuadroLogin">
+    <div class="divDoble">
+      <div class="divI">
+        <div class="divImg divImageF">
+          <ion-img class="imgPopup" [src]="picImage"></ion-img>
+        </div>
+        <div>
+          <ion-chip color="success" *ngFor="let etiqueta of etiquetas">{{etiqueta}}</ion-chip>
+        </div>
+        <!-- <ion-input type="file"  accept=".csv, text/plain" (change)="chooseFile($event)"></ion-input> -->
+      </div>
+      <div class="divD">
+        <ion-label class="labelDescripcion">Descripción</ion-label>
+        <ion-label class="labelDescripcion">{{descripcion}}</ion-label>
+        <ion-select label="Idioma" [(ngModel)]="idIdioma" (ionChange)="handleChange($event)" placeholder="Seleccione un idioma"  >
+          <ion-select-option value="0">Español</ion-select-option>
+          <ion-select-option value="1">Ingles</ion-select-option>
+          <ion-select-option value="2">Aleman</ion-select-option>
+          <ion-select-option value="3">Frances</ion-select-option>
+        </ion-select>
+        <ion-label class="labelDescripcion">{{traduccion}}</ion-label>
+      </div>
+    </div>
+  </div>
+</div>
+

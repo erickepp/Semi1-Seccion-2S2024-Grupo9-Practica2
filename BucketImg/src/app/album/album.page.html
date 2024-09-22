@@ -1,0 +1,33 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>BucketImg</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">BucketImg</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="divGeneral">
+    <div class="cuadroLogin divWithScroll">
+
+      <ion-label>
+        ÁLBUMES
+      </ion-label>
+
+      <ion-button shape="round" (click)="regresar()">REGRESAR</ion-button>
+
+      <div *ngFor="let album of albumes" class="divAlbumes">
+        {{album.name}}
+        <div class="divImgAlbumes">
+          <ion-img *ngFor="let img of album.images" class="imgNormal2" (click)="openModal(img.image_id)" [src]="img.url"></ion-img>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</ion-content>

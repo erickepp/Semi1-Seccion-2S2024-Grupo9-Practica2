@@ -1,0 +1,35 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>BucketImg</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">BucketImg</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="divGeneral">
+    <div class="cuadroLogin">
+      <div class="divDoble">
+        <div class="divI">
+          <div class="divImg">
+            <ion-img class="imgPerfil" [src]="picImage"></ion-img>
+          </div>
+          <ion-input type="file"  accept=".csv, text/plain" (change)="chooseFile($event)"></ion-input>
+        </div>
+        <div class="divD">
+          <ion-input fill="outline" [(ngModel)]="nombre" label="Nombre de la imagen" label-placement="floating"></ion-input>
+          <ion-input fill="outline" [(ngModel)]="descripcion" label="Descripcion" label-placement="floating"></ion-input>
+          <ion-select class="component30" label="Albumes" [(ngModel)]="idAlbum"  placeholder="Seleccione un album">
+            <ion-select-option *ngFor="let album of albumes" value="{{album.album_id}}">{{album.name}}</ion-select-option>
+          </ion-select>
+          <ion-button shape="round" (click)="subir()">CARGAR IMAGEN</ion-button>
+          <ion-button shape="round" (click)="regresar()">CANCELAR</ion-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

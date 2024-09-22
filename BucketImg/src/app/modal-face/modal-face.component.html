@@ -1,0 +1,8 @@
+<div class="divGeneral">
+  <div class="cuadroLogin">
+    <ion-img class="imgNormalPopup" [src]="picImage"></ion-img>
+    <ion-input type="file"  accept=".csv, text/plain" (change)="chooseFile($event)"></ion-input>
+    <ion-input fill="outline" [(ngModel)]="correo" label="Usuario" label-placement="floating"></ion-input>
+    <ion-button shape="round" (click)="reconocimiento()">RECONOCIMIENTO FACIAL</ion-button>
+  </div>
+</div>

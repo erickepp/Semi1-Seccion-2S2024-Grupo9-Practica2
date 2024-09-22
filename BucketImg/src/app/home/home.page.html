@@ -1,0 +1,39 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      BucketImg
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">BucketImg</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="divGeneral">
+    <div class="cuadroLogin">
+      <div class="divDoble">
+        <div class="divI">
+          <div class="divImg">
+            <ion-img class="imgPerfil" [src]="picImage"></ion-img>
+          </div>
+          
+          <ion-label class="labels">Nombre de usuario: {{usuario}}</ion-label>
+          <ion-label class="labels">Correo electronico: {{correo}}</ion-label>
+        </div>
+        <div class="divD">
+          <ion-button shape="round" (click)="irPantalla('/configuracion')">Configuración de la cuenta</ion-button>
+          <ion-button shape="round" (click)="irPantalla('/album')">Ver albumes</ion-button>
+          <ion-button shape="round" (click)="irPantalla('/editar')">Editar albumes</ion-button>
+          <ion-button shape="round" (click)="irPantalla('/subir')">Subir imagen</ion-button>
+          <ion-button shape="round" (click)="irPantalla('/extraer')">Extraer texto</ion-button>
+          <ion-button shape="round" (click)="irPantalla('/login')">Cerrar sesión</ion-button>
+        </div>
+      </div>
+    </div>
+  </div>
+    
+</ion-content>

@@ -1,0 +1,32 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>BucketImg</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">BucketImg</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="divGeneral">
+    <div class="cuadroLogin">
+      <div class="divDoble">
+        <div class="divI">
+          <div class="divImg">
+            <ion-img class="imgPerfil" [src]="picImage"></ion-img>
+          </div>
+          <ion-input type="file"  accept=".csv, text/plain" (change)="chooseFile($event)"></ion-input>
+        </div>
+        <div class="divD">
+          <ion-toggle [checked]="activado">Uso de reconocimiento facial para autenticarte</ion-toggle>
+          <ion-input fill="outline" [(ngModel)]="pass" label="Contraseña" label-placement="floating" type="password"></ion-input>
+          <ion-button shape="round" (click)="registrar()">GUARDAR CAMBIOS</ion-button>
+          <ion-button shape="round" (click)="regresar()">CANCELAR</ion-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

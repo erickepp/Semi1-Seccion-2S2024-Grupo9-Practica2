@@ -1,0 +1,20 @@
+.labelTitulo {
+    text-align: center;
+    margin-top: 10px;
+
+}
+
+.labelDescripcion {
+    text-align: justify;
+}
+
+.divImageF {
+    width: 50%;
+    height: 50%;
+}
+
+.imgPopup::part(image) {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 0 !important;
+}

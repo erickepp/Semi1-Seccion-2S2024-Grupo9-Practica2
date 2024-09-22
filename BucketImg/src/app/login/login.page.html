@@ -1,0 +1,13 @@
+<ion-content [fullscreen]="true">
+  <div class="divGeneral">
+    <div class="cuadroLogin">
+      <ion-label>INGRESO</ion-label>
+      <ion-input fill="outline" [(ngModel)]="correo" label="Usuario" label-placement="floating"></ion-input>
+      <ion-input fill="outline" [(ngModel)]="pass" label="Contraseña" label-placement="floating" type="password"></ion-input>
+      <ion-label >{{mensaje}}</ion-label>
+      <ion-button shape="round" (click)="irInicio()">INGRESAR</ion-button>
+      <ion-button shape="round" (click)="openModal()">RECONOCIMIENTO FACIAL</ion-button>
+      <ion-button fill="clear" (click)="irRegistro()">Registrarse</ion-button>
+    </div>
+  </div>
+</ion-content>

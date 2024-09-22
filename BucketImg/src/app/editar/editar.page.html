@@ -1,0 +1,41 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>BucketImg</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">BucketImg</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="divGeneral">
+    <div class="cuadroLogin">
+      <ion-button shape="round" (click)="regresar()">REGRESAR</ion-button>
+
+      <div class="divOpciones">
+        <ion-input class="component30" fill="outline" [(ngModel)]="nameAlbum" label="Nombre de album" label-placement="floating"></ion-input>
+        <ion-button class="component20" shape="round" (click)="crear()">CREAR ALBUM</ion-button>
+      </div>  
+      
+      <div class="divOpciones">
+        <ion-select class="component30" label="Albumes" [(ngModel)]="idEliminarAlbum"  placeholder="Seleccione un album">
+          <ion-select-option *ngFor="let album of albumes" value="{{album.album_id}}">{{album.name}}</ion-select-option>
+        </ion-select>
+        <ion-button class="component20" shape="round" (click)="eliminar()">ELIMINAR ALBUM</ion-button>
+      </div>  
+
+      <div class="divOpciones">
+        <ion-select class="component30" label="Albumes" [(ngModel)]="idEditarAlbum"  placeholder="Seleccione un album">
+          <ion-select-option *ngFor="let album of albumes" value="{{album.album_id}}">{{album.name}}</ion-select-option>
+        </ion-select>
+        <ion-input class="component30" fill="outline" [(ngModel)]="newNameAlbum" label="Nuevo nombre de album" label-placement="floating"></ion-input>
+        <ion-button class="component20" shape="round" (click)="modificar()">MODIFICAR ALBUM</ion-button>
+      </div>  
+
+    </div>
+  </div>
+  
+</ion-content>

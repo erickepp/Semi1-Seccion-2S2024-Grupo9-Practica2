@@ -1,0 +1,27 @@
+.divOpciones {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-content: center;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    border-bottom: groove;
+    padding-bottom: 10px;
+}
+
+.component10 {
+    width: 10%;
+}
+
+.component20 {
+    width: 20%;
+}
+
+.component30 {
+    width: 30%;
+}
+
+.component40 {
+    width: 40%;
+}
