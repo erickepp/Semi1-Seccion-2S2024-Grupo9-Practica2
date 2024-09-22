@@ -239,6 +239,18 @@
 
 ---
 
+### GET /images/image_id/translate
+
+**Descripción:**  Traduce la descripción de una imagen por su ID a múltiples idiomas.
+
+**Parámetros de ruta:**
+
+-   **image_id** (requerido): El ID de la imagen.
+
+**Respuesta:** Un objeto JSON con las traducciones en tres idiomas.
+
+---
+
 ### POST /images
 
 **Descripción:** Registra una nueva imagen en un álbum.
