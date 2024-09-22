@@ -59,7 +59,7 @@ def get_image_desc_translations(image_id):
          # Obtener traducciones de la descripción
         translations = translate_text(description)
         
-        return jsonify(translations), 200
+        return jsonify({'translations': translations}), 200
     except Exception as e:
         return jsonify({'message': f'Error interno del servidor: {str(e)}'}), 500
 
