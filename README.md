@@ -1,1 +1,0 @@
-# Semi1-Seccion-2S2024-Grupo9-Practica2
