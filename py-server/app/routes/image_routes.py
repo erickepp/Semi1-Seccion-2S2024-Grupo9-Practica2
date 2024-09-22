@@ -19,6 +19,11 @@ def get_image_labels_route(image_id):
     return ic.get_image_labels(image_id)
 
 
+@bp.route('/images/<int:image_id>/translate', methods=['GET'])
+def get_image_desc_translations_route(image_id):
+    return ic.get_image_desc_translations(image_id)
+
+
 @bp.route('/images', methods=['POST'])
 def post_image_route():
     return ic.add_image()

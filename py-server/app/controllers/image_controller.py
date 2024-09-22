@@ -4,6 +4,7 @@ from app.models.album import Album
 from app.models.image import Image
 from app.helpers.s3_helper import upload_file
 from app.helpers.rekognition_helper import get_labels, extract_text
+from app.helpers.translate_helper import translate_text
 from config.db import db
 
 
@@ -42,6 +43,23 @@ def get_image_labels(image_id):
         labels = get_labels(s3_bucket_name, s3_object_name)
         
         return jsonify({'labels': labels}), 200
+    except Exception as e:
+        return jsonify({'message': f'Error interno del servidor: {str(e)}'}), 500
+
+
+def get_image_desc_translations(image_id):
+    try:
+        image = Image.query.get(image_id)
+        if not image:
+            return jsonify({'message': 'Imagen no encontrada.'}), 404
+
+        # Obtener la descripción de la imagen
+        description = image.description
+
+         # Obtener traducciones de la descripción
+        translations = translate_text(description)
+        
+        return jsonify(translations), 200
     except Exception as e:
         return jsonify({'message': f'Error interno del servidor: {str(e)}'}), 500
 
