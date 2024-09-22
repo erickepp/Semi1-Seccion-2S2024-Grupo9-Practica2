@@ -13,7 +13,8 @@ Para el desarrollo de la plataforma soundstream se elijio como servicio cloud AW
 
 **EC2:**
 
-![image](https://hackmd.io/_uploads/ByI54zppC.png)
+![image](https://github.com/user-attachments/assets/78748e32-4e8a-4aa4-b897-4b0cd6885317)
+
 
 
 * Maquina virtual: Contiene el backend de python de la aplicacion haciendo uso de dos grupos de seguridad para permitir acceso unicamente a los puertos necesarios.
