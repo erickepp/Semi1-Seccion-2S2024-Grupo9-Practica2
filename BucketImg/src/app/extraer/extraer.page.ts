@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AppComponent } from '../app.component';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-extraer',
@@ -11,12 +12,19 @@ export class ExtraerPage implements OnInit {
 
   public sourceFile: any;
   public picImage:any;
-  public textoExtraido: string = "ESTE ES EL TEXTO QUE SE LOGRO EXTRAER DE LA IMAGEN";
+  public textoExtraido: string = "";
+  dataUser: any;
 
   constructor(
     private router: Router
     , public appC: AppComponent
-  ) { }
+    , public http: HttpClient
+    , private activatedRoute: ActivatedRoute
+  ) { 
+    this.activatedRoute.queryParams.subscribe(async params => {
+      this.dataUser = params;
+    });
+  }
 
   ngOnInit() {
   }
@@ -31,11 +39,26 @@ export class ExtraerPage implements OnInit {
   }
 
   registrar() {
+    let usuarioForm = new FormData();
+    usuarioForm.append("image",this.sourceFile);
 
+
+    this.http.post(this.appC.urlC + '/images/text', usuarioForm, {
+      headers: new HttpHeaders({
+        'enctype':'multipart/form-data'
+      })
+    })
+    .subscribe(data => {
+      let jsonData = JSON.parse(JSON.stringify(data));
+      console.log(jsonData.text);
+      this.textoExtraido = jsonData.text;
+    }, error => {
+      console.log(error);
+    });
   }
 
   regresar() {
-    this.router.navigate(['/home']);
+    this.router.navigate(['/home'], {queryParams: this.dataUser});
   }
 
 }

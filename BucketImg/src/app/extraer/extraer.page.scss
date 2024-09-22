@@ -11,3 +11,13 @@
   ion-button {
     width: 80%;
   }
+
+.imgNormalPopup {
+    height: 100% !important;
+}
+
+.imgNormalPopup::part(image) {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 0;
+}
