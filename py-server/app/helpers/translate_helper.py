@@ -24,7 +24,7 @@ def translate_text(text):
         # Español, Inglés, Alemán, Francés
         target_languages = ['es', 'en', 'de', 'fr']
 
-        translations = {}
+        translations = []
 
         # Detectar el idioma de origen
         detect_response = translate_client.translate_text(
@@ -47,7 +47,10 @@ def translate_text(text):
                 TargetLanguageCode=target_language
             )
             language_name = language_map.get(target_language, target_language)
-            translations[language_name] = translate_response['TranslatedText']
+            translations.append({
+                'language': language_name,
+                'description': translate_response['TranslatedText']
+            })
 
         return translations
     except (BotoCoreError, ClientError) as e:
