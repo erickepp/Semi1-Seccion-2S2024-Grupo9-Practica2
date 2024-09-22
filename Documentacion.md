@@ -1,12 +1,15 @@
----
-title: Documentacion Seminario de sistemas 1 Practica 2 Grupo 9
 
----
 
 # Documentacion Seminario de sistemas 1 Practica 2 Grupo 9
 
 ## Integrantes:
 
+| Nombre | Carnet | 
+| -------- | -------- | 
+| Erick Estuardo Patzan Polanco   | 201602627    | 
+|Gerson Oswaldo Ruíz Ramírez|202011405|
+|Henry Rafael Maldonado Sandoval|201114117|
+|Paulo Fernando Mérida Salazar|202002042|
 
 ## Arquitectura
 Para el desarrollo de la plataforma soundstream se elijio como servicio cloud AWS para hacer uso de sus diferentes servicios y funcionalidades a continuacion se describira brevemente cada uno de los servicios utilizados para el desarrollo del proyecto.
