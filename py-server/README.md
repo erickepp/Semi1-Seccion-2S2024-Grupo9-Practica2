@@ -247,7 +247,7 @@
 
 -   **image_id** (requerido): El ID de la imagen.
 
-**Respuesta:** Un objeto JSON con las traducciones en tres idiomas.
+**Respuesta:** Una lista con las traducciones en tres idiomas.
 
 ---
 
